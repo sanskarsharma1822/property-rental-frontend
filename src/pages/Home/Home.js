@@ -7,10 +7,14 @@ import ConnectWallet from "../ConnectWallet/ConnectWallet";
 import { useNotification } from "web3uikit";
 import MainPage from "../MainPage/MainPage";
 
+//----------------------------Contract Imports---------------------------------------//
+
 import {
   adminABI,
   adminContractAddress,
 } from "../../constants/Admin/adminConstants";
+
+//----------------------------------------------------------------------------------//
 
 function Home() {
   const { isWeb3Enabled, account, chainId: chainIdHex } = useMoralis();
@@ -23,7 +27,7 @@ function Home() {
   const [disableSignup, setDisableSignup] = useState(false);
   const [userAccount, setUserAccount] = useState("");
 
-  //Contract Functions
+  //============================Contract Functions==================================//
 
   const { runContractFunction: getTokenId } = useWeb3Contract({
     abi: adminABI,
@@ -45,12 +49,14 @@ function Home() {
     params: {},
   });
 
-  //UseEffects
+  //=============================================================================//
+
+  //-----------------------------------UseEffects----------------------------------//
 
   useEffect(() => {
     if (isWeb3Enabled) {
       console.log("first useEffect");
-      if (account !== "" || account !== null) {
+      if (account !== "" || account !== "null") {
         setUserAccount(account);
         console.log(account);
       }
@@ -66,14 +72,18 @@ function Home() {
 
   useEffect(() => {
     if (isWeb3Enabled) {
-      if (userAccount !== "" || userAccount !== null) {
+      if (userAccount) {
         console.log("change in account, calling update ui");
+        console.log(userAccount);
+        console.log(adminAddress);
         updateUI();
       }
     }
   }, [userAccount]);
 
-  //Functions
+  //--------------------------------------------------------------------------------//
+
+  //********************************Functions**************************************//
 
   const updateUI = async () => {
     const tempEntryTokenID = await getTokenId({
@@ -83,7 +93,9 @@ function Home() {
   };
 
   const getAccount = async () => {
-    const accounts = await window.ethereum.enable();
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
     const account = accounts[0];
     setUserAccount(account);
   };
@@ -123,40 +135,52 @@ function Home() {
     });
   };
 
+  //**************************************************************************//
+  // if entryToken = -1 : wait , else if entryToken = 0 : no account else mainPage
+  console.log(chainId);
+  console.log(isWeb3Enabled);
   return (
     <div className="fullbox">
-      {entryTokenId !== "0" ? (
-        <MainPage userTokenId={entryTokenId} />
-      ) : (
-        <div>
-          <nav>
-            <ConnectWallet />
-          </nav>
-          <div className="homeContainer">
-            <section
-              className="home"
-              style={{ backgroundColor: "rgb(0,0,0,0.75)", borderRadius: "2%" }}
-            >
-              {entryTokenId === "-1" ? (
-                <h1>Wait</h1>
-              ) : (
-                <div>
+      {
+        // adminAddress == null ? (
+        //   <h1>Not available on this chain</h1>
+        // ) :
+        entryTokenId !== "0" && entryTokenId !== "-1" ? (
+          <MainPage userTokenId={entryTokenId} />
+        ) : (
+          <div>
+            <nav>
+              <ConnectWallet />
+            </nav>
+            <div className="homeContainer">
+              <section
+                className="home"
+                style={{
+                  backgroundColor: "rgb(0,0,0,0.75)",
+                  borderRadius: "2%",
+                }}
+              >
+                {entryTokenId === "-1" ? (
                   <h1>You don't have an account</h1>
-                  <button
-                    disabled={disableSignup === true}
-                    onClick={async () => {
-                      setDisableSignup(true);
-                      handleEntryTokenMint();
-                    }}
-                  >
-                    Mint
-                  </button>
-                </div>
-              )}
-            </section>
+                ) : (
+                  <div>
+                    <h1>Wait</h1>
+                    <button
+                      disabled={disableSignup === true}
+                      onClick={async () => {
+                        setDisableSignup(true);
+                        handleEntryTokenMint();
+                      }}
+                    >
+                      Mint
+                    </button>
+                  </div>
+                )}
+              </section>
+            </div>
           </div>
-        </div>
-      )}
+        )
+      }
     </div>
   );
 }

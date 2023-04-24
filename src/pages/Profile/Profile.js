@@ -7,11 +7,14 @@ import console from "console-browserify";
 import ConnectWallet from "../ConnectWallet/ConnectWallet";
 import { useNotification } from "web3uikit";
 
+//----------------------------Contract Imports---------------------------------------//
 import {
   adminABI,
   adminContractAddress,
 } from "../../constants/Admin/adminConstants";
 import axios from "axios";
+
+//----------------------------------------------------------------------------------//
 
 function Profile() {
   const { isWeb3Enabled, account, chainId: chainIdHex } = useMoralis();
@@ -24,7 +27,7 @@ function Profile() {
   const [profileURI, setProfileURI] = useState("");
   const [profileData, setProfileData] = useState("");
 
-  //Contract Functions
+  //=====================================Contract Functions=================================//
 
   const { runContractFunction: getTokenId } = useWeb3Contract({
     abi: adminABI,
@@ -44,7 +47,9 @@ function Profile() {
     },
   });
 
-  //UseEffects
+  //===================================================================================//
+
+  //----------------------------------------UseEffects---------------------------------//
 
   useEffect(() => {
     if (isWeb3Enabled) {
@@ -58,19 +63,24 @@ function Profile() {
     }
   }, [entryTokenId]);
 
-  //Functions
+  //-------------------------------------------------------------------------------//
+
+  //***********************************Functions********************************//
+
   const updateUI = async () => {
+    console.log(entryTokenId);
     const tempTokenURI = await tokenURI({
       onError: (error) => console.log(error),
     });
+    console.log(tempTokenURI);
     setProfileURI(tempTokenURI.toString());
     const { data } = await axios.get(`${tempTokenURI}`);
     const { attributes, image } = data;
     const tempObj = {
       image: image,
-      reputation: attributes[0].reputation,
-      dealTokens: attributes[0].dealTokens,
-      propertiesOwned: attributes[0].propertiesOwned,
+      reputation: attributes.reputation,
+      dealTokens: attributes.dealTokens,
+      propertiesOwned: attributes.propertiesOwned,
     };
     setProfileData(tempObj);
   };
@@ -82,8 +92,7 @@ function Profile() {
     setEntryTokenId(tempEntryTokenID.toString());
   };
 
-  console.log(entryTokenId);
-  console.log(profileData.image);
+  //************************************************************************//
 
   return (
     <div className="fullbox">

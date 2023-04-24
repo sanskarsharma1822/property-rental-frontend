@@ -2,24 +2,17 @@ import axios from "axios";
 import console from "console-browserify";
 const JWT = "Bearer " + process.env.REACT_APP_PINATA_JWT;
 
-const uploadJsonToIPFS = async (propertyData) => {
-  const { description, highlights, location, terms, imagesArr } = propertyData;
-  console.log(imagesArr);
+const uploadJsonToIPFS = async (_data) => {
+  console.log(_data);
   const data = JSON.stringify({
     pinataOptions: {
       cidVersion: 1,
     },
     pinataMetadata: {
-      name: "Property Data",
+      name: "Property Rental Web3",
     },
 
-    pinataContent: {
-      description: description,
-      highlights: highlights,
-      location: location,
-      terms: terms,
-      imagesArr: imagesArr,
-    },
+    pinataContent: _data,
   });
 
   var config = {
