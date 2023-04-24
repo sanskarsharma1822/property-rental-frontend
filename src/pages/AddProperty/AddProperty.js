@@ -174,6 +174,7 @@ function AddProperty() {
       // console.log(account);
       // console.log(propertyDescription);
       console.log("dispatching");
+      // handleNotification();
 
       dispatchToServer(
         addNewProperty({
@@ -299,6 +300,7 @@ function AddProperty() {
     setEntryTokenURI(
       `https://ipfs.io/ipfs/${tempUpdatedEntryTokenURI.IpfsHash}`
     );
+    handleNotification();
   };
 
   const updateUI = async () => {
@@ -336,7 +338,7 @@ function AddProperty() {
   // if property listed successfully, update entry token id of owner (line 243)
   const handleSuccess = async function (tx) {
     await tx.wait(1);
-    handleNotification();
+    // handleNotification();
     getCurrentEntryTokenData();
   };
 
@@ -348,6 +350,7 @@ function AddProperty() {
       position: "topR",
       icon: "checkmark",
     });
+    updateUI();
   };
 
   const listPropertyOnServer = function () {
