@@ -7,6 +7,7 @@ export default (properties = [], action) => {
     case "LIST_PROPERTY":
       return [...properties, action.payload];
     case "APPLY_INTERESTED":
+    case "CLEAR_INTERESTED":
       return properties.map((property) =>
         property._id === action.payload._id ? action.payload : property
       );

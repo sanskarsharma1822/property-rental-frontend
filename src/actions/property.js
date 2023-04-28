@@ -27,3 +27,12 @@ export const applyForTenant = (id, newInterestedUser) => async (dispatch) => {
     console.log(error);
   }
 };
+
+export const clearInterestedTenants = (id) => async (dispatch) => {
+  try {
+    const { data } = await api.clearInterested(id);
+    dispatch({ type: "CLEAR_INTERESTED", payload: data });
+  } catch (error) {
+    console.log(error);
+  }
+};

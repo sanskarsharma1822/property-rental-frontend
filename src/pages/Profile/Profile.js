@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "../../App.css";
 import "./Profile.css";
 import { useMoralis, useWeb3Contract } from "react-moralis";
@@ -16,7 +16,10 @@ import axios from "axios";
 
 //----------------------------------------------------------------------------------//
 
+//to reuse this component. setting userAccount parameter default to null. then check if 'account' is transfered to it as parameter( in case of landlorad checking user profile, then show tenant profile ) else if no parameter given (in case of checking own profile, use account from web3 as userAccount)
 function Profile() {
+  const location = useLocation();
+
   const { isWeb3Enabled, account, chainId: chainIdHex } = useMoralis();
   const chainId = parseInt(chainIdHex);
   const dispatch = useNotification();
@@ -26,6 +29,7 @@ function Profile() {
   const [entryTokenId, setEntryTokenId] = useState("0");
   const [profileURI, setProfileURI] = useState("");
   const [profileData, setProfileData] = useState("");
+  const [profileAccount, setProfileAccount] = useState("");
 
   //=====================================Contract Functions=================================//
 
@@ -34,7 +38,7 @@ function Profile() {
     contractAddress: adminAddress,
     functionName: "getTokenId",
     params: {
-      _userAddress: account,
+      _userAddress: profileAccount,
     },
   });
 
@@ -53,9 +57,21 @@ function Profile() {
 
   useEffect(() => {
     if (isWeb3Enabled) {
-      updateTokenID();
+      if (location.state != null) {
+        const { userAccount } = location.state;
+        setProfileAccount(userAccount);
+      } else {
+        setProfileAccount(account);
+      }
+      // updateTokenID();
     }
   }, [isWeb3Enabled]);
+
+  useEffect(() => {
+    if (profileAccount !== "") {
+      updateTokenID();
+    }
+  }, [profileAccount]);
 
   useEffect(() => {
     if (entryTokenId !== "0") {

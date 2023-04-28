@@ -168,14 +168,7 @@ function AddProperty() {
       propertyContractAndUserAddress.length !== 0 &&
       propertyDataIPFS !== ""
     ) {
-      // console.log(propertyRent);
-      // console.log(propertyContractAndUserAddress[0]);
-      // console.log(propertyContractAndUserAddress[1]);
-      // console.log(account);
-      // console.log(propertyDescription);
       console.log("dispatching");
-      // handleNotification();
-
       dispatchToServer(
         addNewProperty({
           ownerAddress: propertyContractAndUserAddress[1],
@@ -225,49 +218,6 @@ function AddProperty() {
       "PropertyListed",
       (_ownerAddress, _propertyAddress, _propertyData) => {
         setPropertyContractAndUserAddress([_propertyAddress, _ownerAddress]);
-        // console.log(_propertyData);
-        // console.log(_ownerAddress);
-        // console.log(account);
-        // console.log("LISTED!!!!!");
-        // console.log(_ownerAddress);
-        // console.log(_propertyAddress);
-        // console.log(_propertyData);
-        // console.log(account);
-        // console.log(propertyRent);
-        // console.log(propertySecurity);
-        // console.log(propertyDescription);
-        // console.log(propertyDataIPFS);
-        // console.log(propertyHighlights);
-        // console.log(propertyTerms);
-        // console.log(propertyImageHashes);
-        // console.log(propertyLocation);
-
-        // handleNotification();
-        // updateUI();
-
-        //       const tempProperty = {
-        //         ownerAddress: _ownerAddress,
-        // contractAddress: _propertyAddress,
-        // dataURI: String,
-        // onRent: {
-        //   type: Boolean,
-        //   default: false,
-        // },
-        // interestedUsers: {
-        //   type: [String],
-        //   default: [],
-        // },
-        // tenantHistory: {
-        //   type: [String],
-        //   default: [],
-        // },
-        // rent: Number,
-        // security: Number,
-        // images: [String],
-        // completeLocation: String,
-        // state: String,
-        // description: String,
-        //       }
       }
     );
 
@@ -351,18 +301,6 @@ function AddProperty() {
       icon: "checkmark",
     });
     updateUI();
-  };
-
-  const listPropertyOnServer = function () {
-    console.log(account);
-    console.log(propertyRent);
-    console.log(propertySecurity);
-    console.log(propertyDescription);
-    console.log(propertyDataIPFS);
-    console.log(propertyHighlights);
-    console.log(propertyTerms);
-    console.log(propertyImageHashes);
-    console.log(propertyLocation);
   };
 
   //************************************************************************//
