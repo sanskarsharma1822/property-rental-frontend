@@ -1,6 +1,7 @@
 import console from "console-browserify";
 import { Link, useLocation } from "react-router-dom";
 import { useMoralis, useWeb3Contract } from "react-moralis";
+import { ethers } from "ethers";
 
 import { useDispatch } from "react-redux";
 import { applyForTenant, clearInterestedTenants } from "../../actions/property";
@@ -16,6 +17,21 @@ const PropertyDetail = () => {
 
   const { isWeb3Enabled, account, chainId: chainIdHex } = useMoralis();
   const chainId = parseInt(chainIdHex);
+
+  const dispatch = useDispatch();
+  const dispatchNotification = useNotification();
+
+  const [i, setI] = useState(0);
+  const [noOfReview, setNoOfReviews] = useState(0);
+  const [reviewArr, setReviewArr] = useState([]);
+
+  const [verifiedUser, setVerifiedUser] = useState("");
+
+  const [selectedTenantAddress, setSelectedTenantAddress] = useState("");
+
+  const [applied, setApplied] = useState(false);
+  const [disable, setDisable] = useState(false);
+
   const {
     _id,
     completeLocation,
@@ -34,14 +50,14 @@ const PropertyDetail = () => {
     terms,
   } = details;
 
-  // const { runContractFunction: getReview } = useWeb3Contract({
-  //   abi: propertyABI,
-  //   contractAddress: contractAddress,
-  //   functionName: "getReview",
-  //   params: {
-  //     _index: i,
-  //   },
-  // });
+  const { runContractFunction: getReview } = useWeb3Contract({
+    abi: propertyABI,
+    contractAddress: contractAddress,
+    functionName: "getReview",
+    params: {
+      _index: i,
+    },
+  });
 
   const { runContractFunction: getNoOfReviews } = useWeb3Contract({
     abi: propertyABI,
@@ -50,35 +66,22 @@ const PropertyDetail = () => {
     params: {},
   });
 
-  // const { runContractFunction: verifiedByLandlord } = useWeb3Contract({
-  //   abi: propertyABI,
-  //   contractAddress: contractAddress,
-  //   functionName: "verifiedByLandlord",
-  //   params: {
-  //     _proposedTenantAddress: selectedTenantAddress,
-  //   },
-  // });
+  const { runContractFunction: verifiedByLandlord } = useWeb3Contract({
+    abi: propertyABI,
+    contractAddress: contractAddress,
+    functionName: "verifiedByLandlord",
+    params: {
+      _proposedTenantAddress: selectedTenantAddress,
+    },
+  });
 
-  // const { runContractFunction: getAddressVerifiedByOwner } = useWeb3Contract({
-  //   abi: propertyABI,
-  //   contractAddress: contractAddress,
-  //   functionName: "getAddressVerifiedByOwner",
-  //   params: {},
-  // });
+  const { runContractFunction: getAddressVerifiedByOwner } = useWeb3Contract({
+    abi: propertyABI,
+    contractAddress: contractAddress,
+    functionName: "getAddressVerifiedByOwner",
+    params: {},
+  });
 
-  const dispatch = useDispatch();
-  const dispatchNotification = useNotification();
-
-  const [i, setI] = useState(0);
-  const [noOfReview, setNoOfReviews] = useState(0);
-  const [reviewArr, setReviewArr] = useState([]);
-
-  const [verifiedUser, setVerifiedUser] = useState("");
-
-  // const [selectedTenantAddress, setSelectedTenantAddress] = useState("");
-
-  const [applied, setApplied] = useState(false);
-  const [disable, setDisable] = useState(false);
   const applyInterested = () => {
     dispatch(applyForTenant(_id, { userAddress: account }));
     setApplied(true);
@@ -88,22 +91,22 @@ const PropertyDetail = () => {
   useEffect(() => {
     if (isWeb3Enabled) {
       getTotalReviews();
-      // getTenantVerifiedByOwner();
+      getTenantVerifiedByOwner();
     }
   }, [isWeb3Enabled]);
 
-  // useEffect(() => {
-  //   if (noOfReview !== 0) {
-  //     getReviewFromContract();
-  //   }
-  // }, [noOfReview]);
+  useEffect(() => {
+    if (noOfReview !== 0) {
+      getReviewFromContract();
+    }
+  }, [noOfReview]);
 
   //To loop through reviews array in smart contract
-  // useEffect(() => {
-  //   if (i < noOfReview) {
-  //     getReviewFromContract();
-  //   }
-  // }, [i]);
+  useEffect(() => {
+    if (i < noOfReview) {
+      getReviewFromContract();
+    }
+  }, [i]);
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -116,41 +119,44 @@ const PropertyDetail = () => {
 
   /// For tenant verification
 
-  // useState(() => {
-  //   if (selectedTenantAddress !== "") {
-  //     handleTenantVerification();
-  //   }
-  // }, [selectedTenantAddress]);
+  useEffect(() => {
+    if (selectedTenantAddress !== "") {
+      console.log("calling");
+      handleTenantVerification();
+    }
+  }, [selectedTenantAddress]);
 
   //Get total no of reviews as soon as the page loads(web3 enabled)
   const getTotalReviews = async () => {
     const tempNoOfReviews = await getNoOfReviews({
       onError: (error) => console.log(error),
     });
-    setNoOfReviews(tempNoOfReviews);
+    setNoOfReviews(
+      ethers.utils.parseEther(tempNoOfReviews.toString()).toNumber()
+    );
   };
 
-  // const getReviewFromContract = async () => {
-  //   const tempReview = await getReview({
-  //     onError: (error) => console.log(error),
-  //   });
-  //   setReviewArr((prevArr) => [...prevArr, tempReview]);
-  //   setI((prevI) => prevI + 1);
-  // };
+  const getReviewFromContract = async () => {
+    const tempReview = await getReview({
+      onError: (error) => console.log(error),
+    });
+    setReviewArr((prevArr) => [...prevArr, tempReview]);
+    setI((prevI) => prevI + 1);
+  };
 
-  // const getTenantVerifiedByOwner = async () => {
-  //   const tempVerified = await getAddressVerifiedByOwner({
-  //     onError: (error) => console.log(error),
-  //   });
-  //   setVerifiedUser(tempVerified);
-  // };
+  const getTenantVerifiedByOwner = async () => {
+    const tempVerified = await getAddressVerifiedByOwner({
+      onError: (error) => console.log(error),
+    });
+    setVerifiedUser(tempVerified);
+  };
 
-  // const handleTenantVerification = async () => {
-  //   await verifiedByLandlord({
-  //     onError: (error) => console.log(error),
-  //     onSuccess: handleSuccess,
-  //   });
-  // };
+  const handleTenantVerification = async () => {
+    await verifiedByLandlord({
+      onError: (error) => console.log(error),
+      onSuccess: handleSuccess,
+    });
+  };
 
   const handleSuccess = async function (tx) {
     await tx.wait(1);
@@ -158,6 +164,7 @@ const PropertyDetail = () => {
     //--------------check if interested tenant array should be cleared at verification or after the tenant pays security-----------//////
 
     // dispatch(clearInterestedTenants(_id));
+    setVerifiedUser(selectedTenantAddress);
     handleNotification();
   };
 
@@ -173,7 +180,6 @@ const PropertyDetail = () => {
 
   return (
     <div>
-      {console.log(noOfReview)}
       {images.length === 1 ? (
         <img src={images[0]} alt="Property Image" />
       ) : (
@@ -189,11 +195,11 @@ const PropertyDetail = () => {
       <h2>Highlights : {highlights}</h2>
       <h2>Tenant History : {tenantHistory}</h2>
       <h2>Owner Address : {ownerAddress}</h2>
-      {/* <h2>Reviews : {reviewArr}</h2> */}
+      <h2>Reviews : {reviewArr}</h2>
       {account === ownerAddress.toLowerCase() ? (
         ///check if someone is verified already or not
-        ownerAddress !== ownerAddress ? (
-          <h2>Verified Someone</h2>
+        verifiedUser !== ownerAddress ? (
+          <h2>Already verified - {verifiedUser}</h2>
         ) : (
           <div>
             <h2>
@@ -202,14 +208,15 @@ const PropertyDetail = () => {
                 ///// CHECK THIS, WHAT TO DO AFTER VERIFICATION  ---->   At approval of tenant -> step 1. verifiedByLandlord of Contract, step 2. empty interested users array in mongodb, step 3. stop owner from making multiple users verified.
                 ///// or set 1. verifiedByLandlord of smart contract , then other steps after tenant pays security. Not Allowing landlord to verify multiple users.
                 return (
-                  <Link to="/profile" state={{ userAccount: userAdd }}>
-                    {userAdd} <br />
-                    <button
-                    // onClick={() => setSelectedTenantAddress(userAdd)}
-                    >
+                  <div>
+                    <Link to="/profile" state={{ userAccount: userAdd }}>
+                      {userAdd}
+                    </Link>
+                    <button onClick={() => setSelectedTenantAddress(userAdd)}>
                       Approve this for tenant
                     </button>
-                  </Link>
+                    <br />
+                  </div>
                 );
               })}
             </h2>
@@ -217,7 +224,13 @@ const PropertyDetail = () => {
         )
       ) : (
         <div>
-          {onRent === true ? (
+          {verifiedUser.toLowerCase() === account ? (
+            //When verified user clicks start now -> 1. send contract data on ipfs 2. send the ipfs hash, end date, start date, and duration to addTenant function of smart contract
+            // 3. Send data to active property mongodb database. 4. update data of this property in mongodb
+            <div>
+              <button> Start Now </button>
+            </div>
+          ) : onRent === true ? (
             <div>Already on Rent</div>
           ) : interestedUsers.includes(account) || disable ? (
             <div>Already Registered</div>
