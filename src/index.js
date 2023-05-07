@@ -8,10 +8,12 @@ import { Provider } from "react-redux";
 // import thunk from 'redux-thunk';
 import { configureStore } from "@reduxjs/toolkit";
 import propertyReducer from "./reducers/property";
+import dealingReducer from "./reducers/dealings";
 
 const store = configureStore({
   reducer: {
     properties: propertyReducer,
+    dealings: dealingReducer,
   },
 });
 

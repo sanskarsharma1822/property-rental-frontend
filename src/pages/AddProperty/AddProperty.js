@@ -54,6 +54,7 @@ function AddProperty() {
   const [propertySecurity, setPropertySecurity] = useState("");
   const [propertyLocation, setPropertyLocation] = useState("");
   const [propertyDescription, setPropertyDescription] = useState("");
+  const [propertyDuration, setPropertyDuration] = useState("");
   const [propertyTerms, setPropertyTerms] = useState("");
   const [propertyHighlights, setPropertyHighlights] = useState("");
   const [propertyImages, setPropertyImages] = useState([]);
@@ -164,6 +165,9 @@ function AddProperty() {
   ////////////////////when property listed event is emitted, set data in server. First check that new property contract address is not null;
   useEffect(() => {
     //check if owner address and contract address is present or not. then check if ipfs hash is there or not -> to prevent sending data on reload(contract and user data are still there, so it will send multiple post request)
+    console.log("owner address and contract address updated");
+    console.log(propertyContractAndUserAddress);
+    console.log(propertyDataIPFS);
     if (
       propertyContractAndUserAddress.length !== 0 &&
       propertyDataIPFS !== ""
@@ -182,6 +186,7 @@ function AddProperty() {
           description: propertyDescription,
           highlights: propertyHighlights,
           terms: propertyTerms,
+          duration: propertyDuration,
         })
       );
     }
@@ -357,6 +362,13 @@ function AddProperty() {
               placeholder="Property Highlights"
               value={propertyHighlights}
               onChange={(e) => setPropertyHighlights(e.target.value)}
+              required
+            />
+            <input
+              type="number"
+              placeholder="Property Duration"
+              value={propertyDuration}
+              onChange={(e) => setPropertyDuration(e.target.value)}
               required
             />
             <label htmlFor="propertyImages">Select Image : </label>

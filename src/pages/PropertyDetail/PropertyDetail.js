@@ -8,7 +8,12 @@ import { applyForTenant, clearInterestedTenants } from "../../actions/property";
 import { useEffect, useState } from "react";
 
 import { propertyABI } from "../../constants/Property/propertyConstant";
+import DealToken from "../../constants/DealToken /DealToken";
 import { useNotification } from "web3uikit";
+
+import { addNewDealing } from "../../actions/activedealing";
+
+import uploadJsonToIPFS from "../../backendScripts/uploadJsonToIPFS";
 
 const PropertyDetail = () => {
   //Pass data from property cards (explore the property in detail now)
@@ -17,6 +22,7 @@ const PropertyDetail = () => {
 
   const { isWeb3Enabled, account, chainId: chainIdHex } = useMoralis();
   const chainId = parseInt(chainIdHex);
+  const { runContractFunction } = useWeb3Contract();
 
   const dispatch = useDispatch();
   const dispatchNotification = useNotification();
@@ -31,6 +37,8 @@ const PropertyDetail = () => {
 
   const [applied, setApplied] = useState(false);
   const [disable, setDisable] = useState(false);
+
+  const [dealTokenIPFS, setDealTokenIPFS] = useState("");
 
   const {
     _id,
@@ -48,6 +56,7 @@ const PropertyDetail = () => {
     state,
     tenantHistory,
     terms,
+    duration,
   } = details;
 
   const { runContractFunction: getReview } = useWeb3Contract({
@@ -126,6 +135,14 @@ const PropertyDetail = () => {
     }
   }, [selectedTenantAddress]);
 
+  /// For AddTenant
+
+  useEffect(() => {
+    if (dealTokenIPFS !== "") {
+      handleStartLease();
+    }
+  }, [dealTokenIPFS]);
+
   //Get total no of reviews as soon as the page loads(web3 enabled)
   const getTotalReviews = async () => {
     const tempNoOfReviews = await getNoOfReviews({
@@ -158,6 +175,61 @@ const PropertyDetail = () => {
     });
   };
 
+  const handleDealTokenIPFS = async () => {
+    const currentDate = new Date();
+    const endDate = new Date(
+      new Date().getTime() + duration * 30 * 24 * 60 * 60 * 1000
+    );
+    //Getting Deal Token Metadata
+    const dealTokenMetaData = DealToken(
+      duration,
+      terms,
+      ownerAddress,
+      account,
+      currentDate,
+      endDate
+    );
+    const dealTokenIPFSHash = await uploadJsonToIPFS(dealTokenMetaData);
+    setDealTokenIPFS(`https://ipfs.io/ipfs/${dealTokenIPFSHash.IpfsHash}`);
+  };
+
+  const handleStartLease = async () => {
+    //one month after current date;
+    const dueDateJS = new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000);
+    const dueDate = Math.floor(dueDateJS.getTime() / 1000);
+
+    //end date
+    const endDateJS = new Date(
+      new Date().getTime() + duration * 30 * 24 * 60 * 60 * 1000
+    );
+    const endDate = Math.floor(endDateJS.getTime() / 1000);
+
+    //changing security in ether format
+    const tempSecurity = ethers.utils.parseEther(security.toString());
+    const finalSecurity = tempSecurity.toString();
+
+    //contract params
+    const addTenantOptions = {
+      abi: propertyABI,
+      contractAddress: contractAddress,
+      functionName: "addTenant",
+      params: {
+        _newTokenURI: dealTokenIPFS,
+        _dueDate: dueDate,
+        _endDate: endDate,
+        _duration: duration,
+      },
+      msgValue: finalSecurity,
+    };
+
+    // running addTenant contract
+    await runContractFunction({
+      params: addTenantOptions,
+      onSuccess: handleTenantAddedSuccess,
+      onError: (error) => console.log(error),
+    });
+  };
+
   const handleSuccess = async function (tx) {
     await tx.wait(1);
 
@@ -168,11 +240,53 @@ const PropertyDetail = () => {
     handleNotification();
   };
 
+  const handleTenantAddedSuccess = async function (tx) {
+    await tx.wait(1);
+    const tempStartDate = new Date();
+    let loopStartDate = tempStartDate;
+    const tempEndDate = new Date(
+      new Date().getTime() + duration * 30 * 24 * 60 * 60 * 1000
+    );
+    const tempDueDates = [];
+    for (let i = 0; i < duration; i++) {
+      let tempDate = new Date(
+        loopStartDate.getTime() + 30 * 24 * 60 * 60 * 1000
+      );
+      tempDueDates.push(tempDate);
+      loopStartDate = tempDate;
+    }
+    dispatch(
+      addNewDealing({
+        ownerAddress: ownerAddress,
+        tenantAddress: verifiedUser,
+        startDate: tempStartDate,
+        endDate: tempEndDate,
+        dueDates: tempDueDates,
+        duration: duration,
+        contractAddress: contractAddress,
+      })
+    );
+
+    dispatch(clearInterestedTenants(_id));
+
+    handleTenantNotification();
+  };
+
   const handleNotification = function () {
     dispatchNotification({
       type: "success",
       message: "Waiting for tenant to pay security",
       title: "Tenant Verified",
+      position: "topR",
+      icon: "checkmark",
+    });
+  };
+
+  const handleTenantNotification = function () {
+    dispatchNotification({
+      type: "success",
+      message: "Lease Period Started",
+      title: "Security Paid Successfully",
       position: "topR",
       icon: "checkmark",
     });
@@ -228,7 +342,7 @@ const PropertyDetail = () => {
             //When verified user clicks start now -> 1. send contract data on ipfs 2. send the ipfs hash, end date, start date, and duration to addTenant function of smart contract
             // 3. Send data to active property mongodb database. 4. update data of this property in mongodb
             <div>
-              <button> Start Now </button>
+              <button onClick={handleDealTokenIPFS}> Start Now </button>
             </div>
           ) : onRent === true ? (
             <div>Already on Rent</div>

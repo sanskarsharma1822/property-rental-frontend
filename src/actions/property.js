@@ -1,4 +1,4 @@
-import * as api from "../api";
+import * as api from "../api/index";
 import console from "console-browserify";
 
 export const getProperties = () => async (dispatch) => {
