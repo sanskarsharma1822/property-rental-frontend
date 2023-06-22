@@ -1,0 +1,18 @@
+.property-detail {
+  /* Set the desired styles for the container */
+  margin: 0 auto;
+  width: 80%;
+  max-width: 800px;
+  /* Add more styles as needed */
+}
+
+.property-image {
+  /* Set the desired styles for the property image */
+  width: 100%;
+  /* Add more styles as needed */
+}
+
+.carousel {
+  /* Set the desired styles for the image carousel */
+  /* Add more styles as needed */
+}

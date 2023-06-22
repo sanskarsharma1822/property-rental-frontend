@@ -1,0 +1,26 @@
+/* DealTokenData.css */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.loading {
+  font-size: 24px;
+  color: #333;
+}
+
+.image {
+  width: 200px;
+  height: 200px;
+  margin-bottom: 20px;
+}
+
+.attribute {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 10px;
+}

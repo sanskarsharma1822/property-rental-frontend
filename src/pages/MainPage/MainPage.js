@@ -54,6 +54,7 @@ function MainPage({ userTokenId }) {
           <ConnectWallet />
           <Link to="/profile">Profile</Link>
           <Link to="/profile">Properties Owned</Link>
+          <Link to="/tenant">Tenant</Link>
         </div>
       </nav>
       <div className="mainContainer">
@@ -69,14 +70,14 @@ function MainPage({ userTokenId }) {
         {properties.map((propertyDetails) => {
           return (
             //Don't show property if already on rent
-            propertyDetails.onRent === false ? (
-              <PropertyCards
-                property={propertyDetails}
-                key={propertyDetails._id}
-              />
-            ) : (
-              <></>
-            )
+            // propertyDetails.onRent === true ? (
+            <PropertyCards
+              property={propertyDetails}
+              key={propertyDetails._id}
+            />
+            // ) : (
+            //   <></>
+            // )
           );
         })}
       </div>

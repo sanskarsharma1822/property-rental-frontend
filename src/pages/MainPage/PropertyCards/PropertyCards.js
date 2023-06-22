@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import console from "console-browserify";
+import "./PropertyCards.css";
+
 const PropertyCards = ({ property }) => {
   return (
-    <div>
+    <div className="propertyCard">
       <img src={property.images[0]} alt="Property Image"></img>
       <h2>Rent : {property.rent} </h2>
       <h2>Security : {property.security}</h2>

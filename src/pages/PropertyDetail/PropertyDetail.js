@@ -3,6 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { useMoralis, useWeb3Contract } from "react-moralis";
 import { ethers } from "ethers";
 
+import "./PropertyDetail.css";
+
 import { useDispatch } from "react-redux";
 import { applyForTenant, clearInterestedTenants } from "../../actions/property";
 import { useEffect, useState } from "react";
@@ -12,8 +14,13 @@ import DealToken from "../../constants/DealToken /DealToken";
 import { useNotification } from "web3uikit";
 
 import { addNewDealing } from "../../actions/activedealing";
+import axios from "axios";
 
 import uploadJsonToIPFS from "../../backendScripts/uploadJsonToIPFS";
+import {
+  adminABI,
+  adminContractAddress,
+} from "../../constants/Admin/adminConstants";
 
 const PropertyDetail = () => {
   //Pass data from property cards (explore the property in detail now)
@@ -22,10 +29,16 @@ const PropertyDetail = () => {
 
   const { isWeb3Enabled, account, chainId: chainIdHex } = useMoralis();
   const chainId = parseInt(chainIdHex);
+
+  const adminAddress =
+    chainId in adminContractAddress ? adminContractAddress[chainId][0] : null;
   const { runContractFunction } = useWeb3Contract();
 
   const dispatch = useDispatch();
   const dispatchNotification = useNotification();
+
+  const [tenantEntryTokenID, setTenantEntryTokenID] = useState(-1);
+  const [tenantEntryTokenURI, setTenantEntryTokenURI] = useState("");
 
   const [i, setI] = useState(0);
   const [noOfReview, setNoOfReviews] = useState(0);
@@ -91,6 +104,24 @@ const PropertyDetail = () => {
     params: {},
   });
 
+  const { runContractFunction: getTokenId } = useWeb3Contract({
+    abi: adminABI,
+    contractAddress: adminAddress,
+    functionName: "getTokenId",
+    params: {
+      _userAddress: account,
+    },
+  });
+
+  const { runContractFunction: tokenURI } = useWeb3Contract({
+    abi: adminABI,
+    contractAddress: adminAddress,
+    functionName: "tokenURI",
+    params: {
+      tokenId: tenantEntryTokenID,
+    },
+  });
+
   const applyInterested = () => {
     dispatch(applyForTenant(_id, { userAddress: account }));
     setApplied(true);
@@ -130,7 +161,6 @@ const PropertyDetail = () => {
 
   useEffect(() => {
     if (selectedTenantAddress !== "") {
-      console.log("calling");
       handleTenantVerification();
     }
   }, [selectedTenantAddress]);
@@ -140,6 +170,7 @@ const PropertyDetail = () => {
   useEffect(() => {
     if (dealTokenIPFS !== "") {
       handleStartLease();
+      getEntryTokenID();
     }
   }, [dealTokenIPFS]);
 
@@ -148,10 +179,26 @@ const PropertyDetail = () => {
     const tempNoOfReviews = await getNoOfReviews({
       onError: (error) => console.log(error),
     });
-    setNoOfReviews(
-      ethers.utils.parseEther(tempNoOfReviews.toString()).toNumber()
-    );
+    setNoOfReviews(tempNoOfReviews.toNumber());
   };
+
+  //to update entry token
+  useEffect(() => {
+    if (tenantEntryTokenID !== -1) {
+      console.log("calling handleEntryTokenURI");
+      handleEntryTokenURI();
+    }
+  }, [tenantEntryTokenID]);
+
+  useEffect(() => {
+    if (
+      tenantEntryTokenURI !== "" &&
+      (tenantEntryTokenID !== "0" || tenantEntryTokenID !== "-1")
+    ) {
+      console.log("calling updating entryToken");
+      updateEntryToken();
+    }
+  }, [tenantEntryTokenURI]);
 
   const getReviewFromContract = async () => {
     const tempReview = await getReview({
@@ -159,6 +206,42 @@ const PropertyDetail = () => {
     });
     setReviewArr((prevArr) => [...prevArr, tempReview]);
     setI((prevI) => prevI + 1);
+  };
+
+  const getEntryTokenID = async () => {
+    const tempEntryTokenId = await getTokenId({
+      onError: (error) => console.log(error),
+    });
+    console.log(tempEntryTokenId.toString());
+    setTenantEntryTokenID(tempEntryTokenId.toString());
+  };
+
+  const handleEntryTokenURI = async () => {
+    const tempURI = await tokenURI({
+      onError: (err) => console.log(err),
+    });
+    const { data } = await axios.get(`${tempURI}`);
+    const { attributes } = data;
+    const { dealTokens } = attributes;
+    dealTokens.push(contractAddress);
+    const tempURIData = { ...data, dealTokens: dealTokens };
+    console.log(tempURIData);
+    const tempUpdatedEntryTokenURI = await uploadJsonToIPFS(tempURIData);
+    console.log(tempUpdatedEntryTokenURI);
+    setTenantEntryTokenURI(
+      `https://ipfs.io/ipfs/${tempUpdatedEntryTokenURI.IpfsHash}`
+    );
+  };
+
+  const updateEntryToken = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const wallet = new ethers.Wallet(
+      process.env.REACT_APP_PRIVATE_KEY,
+      provider
+    );
+
+    const adminContract = new ethers.Contract(adminAddress, adminABI, wallet);
+    await adminContract.updateTokenURI(tenantEntryTokenURI, tenantEntryTokenID);
   };
 
   const getTenantVerifiedByOwner = async () => {
@@ -187,7 +270,9 @@ const PropertyDetail = () => {
       ownerAddress,
       account,
       currentDate,
-      endDate
+      endDate,
+      [],
+      0
     );
     const dealTokenIPFSHash = await uploadJsonToIPFS(dealTokenMetaData);
     setDealTokenIPFS(`https://ipfs.io/ipfs/${dealTokenIPFSHash.IpfsHash}`);
@@ -258,12 +343,15 @@ const PropertyDetail = () => {
     dispatch(
       addNewDealing({
         ownerAddress: ownerAddress,
-        tenantAddress: verifiedUser,
+        tenantAddress: verifiedUser.toLowerCase(),
+        dataURI: dataURI,
         startDate: tempStartDate,
         endDate: tempEndDate,
         dueDates: tempDueDates,
         duration: duration,
         contractAddress: contractAddress,
+        rent: rent,
+        security: security,
       })
     );
 
@@ -293,12 +381,12 @@ const PropertyDetail = () => {
   };
 
   return (
-    <div>
+    <div className="property-detail">
       {images.length === 1 ? (
-        <img src={images[0]} alt="Property Image" />
+        <img className="property-image" src={images[0]} alt="Property Image" />
       ) : (
         ///// ////////////////////////////add a carousel for multiple images/////////////////////////
-        <div>multiple images</div>
+        <div className="carousel">multiple images</div>
       )}
       <h2>Rent : {rent}</h2>
       <h2>Security : {security}</h2>

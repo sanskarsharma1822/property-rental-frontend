@@ -4,7 +4,9 @@ const DealToken = (
   ownerAddress,
   tenantAddress,
   startDate,
-  endDate
+  endDate,
+  warnings,
+  score
 ) => {
   return {
     name: "Deal Token",
@@ -17,6 +19,8 @@ const DealToken = (
       tenantAddress,
       startDate,
       endDate,
+      warnings,
+      score,
     },
   };
 };

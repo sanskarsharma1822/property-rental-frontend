@@ -12,10 +12,13 @@ import Home from "./pages/Home/Home";
 import Profile from "./pages/Profile/Profile";
 import AddProperty from "./pages/AddProperty/AddProperty";
 import PropertyDetail from "./pages/PropertyDetail/PropertyDetail";
+import Tenant from "./pages/Tenant/Tenant";
 
 //web3
 import { MoralisProvider } from "react-moralis";
 import { NotificationProvider } from "web3uikit";
+import OwnerManagement from "./pages/OwnerManagement/OwnerManagement";
+import DealTokenData from "./pages/DealTokenData/DealTokenData";
 
 function App() {
   const dispatchAction = useDispatch();
@@ -32,6 +35,9 @@ function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="/addProperty" element={<AddProperty />} />
               <Route path="/propertyDetail" element={<PropertyDetail />} />
+              <Route path="/tenant" element={<Tenant />} />
+              <Route path="/ownerManagement" element={<OwnerManagement />} />
+              <Route path="/dealTokenData" element={<DealTokenData />} />
               {/* <Route path="/mainpage" element={<MainPage />} />
               <Route path="/brand" element={<Brand />} />
               <Route path="/brand/warehouse" element={<Warehouse />} />

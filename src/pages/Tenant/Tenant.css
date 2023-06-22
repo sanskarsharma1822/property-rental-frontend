@@ -1,0 +1,23 @@
+/* Tenant.css */
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loading {
+  font-size: 24px;
+  color: #333;
+}
+
+.message {
+  font-size: 24px;
+  color: #333;
+  text-align: center;
+}
+
+.dealings-container {
+  margin-top: 20px;
+}

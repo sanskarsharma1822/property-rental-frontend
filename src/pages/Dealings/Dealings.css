@@ -1,0 +1,51 @@
+.container {
+  background-color: lightgray;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.container h2 {
+  margin: 10px 0;
+}
+
+.container button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.container input[type="text"] {
+  margin-top: 10px;
+  padding: 5px;
+  border-radius: 3px;
+  border: 1px solid lightgray;
+}
+
+.container select {
+  margin-top: 10px;
+  padding: 5px;
+  border-radius: 3px;
+  border: 1px solid lightgray;
+}
+
+.container button:disabled {
+  background-color: lightgray;
+  cursor: not-allowed;
+}
+
+.container button:disabled:hover {
+  background-color: lightgray;
+}
+
+.container button:hover {
+  background-color: #45a049;
+}
+
+.container label {
+  margin-top: 10px;
+  display: block;
+}

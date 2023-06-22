@@ -1,0 +1,46 @@
+/* PropertyCards.css */
+
+.propertyCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 300px;
+  padding: 20px;
+  background-color: #f1f1f1;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.propertyCard img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.propertyCard h2 {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.propertyCard button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.propertyCard button a {
+  text-decoration: none;
+  color: #fff;
+}
+
+.propertyCard button:hover {
+  background-color: #0056b3;
+}

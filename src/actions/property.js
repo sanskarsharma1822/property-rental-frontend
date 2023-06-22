@@ -36,3 +36,22 @@ export const clearInterestedTenants = (id) => async (dispatch) => {
     console.log(error);
   }
 };
+
+export const endPeriodChanges = (dataURI) => async (dispatch) => {
+  try {
+    const { data } = await api.endTenantChanges(dataURI);
+    dispatch({ type: "MODIFIED_PROPERTY", payload: data });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// export const getProperty = (dataURI) => async (dispatch) => {
+//   try {
+//     const { data } = await api.checkStatus(dataURI);
+//     console.log(data);
+//     dispatch({ type: "GET_PROPERTY", payload: data });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };

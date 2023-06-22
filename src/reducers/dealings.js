@@ -4,6 +4,10 @@ export default (dealings = [], action) => {
       return action.payload;
     case "LIST_DEALING":
       return [...dealings, action.payload];
+    case "FIND_DEALING":
+      return action.payload;
+    case "DELETE_DEALING":
+      return dealings.filter((dealing) => dealing._id !== action.payload);
     //   case "APPLY_INTERESTED":
     //   case "CLEAR_INTERESTED":
     //     return properties.map((property) =>

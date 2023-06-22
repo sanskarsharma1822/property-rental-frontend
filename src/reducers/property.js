@@ -3,11 +3,13 @@
 export default (properties = [], action) => {
   switch (action.type) {
     case "FETCH_ALL":
+    case "GET_PROPERTY":
       return action.payload;
     case "LIST_PROPERTY":
       return [...properties, action.payload];
     case "APPLY_INTERESTED":
     case "CLEAR_INTERESTED":
+    case "MODIFIED_PROPERTY":
       return properties.map((property) =>
         property._id === action.payload._id ? action.payload : property
       );
