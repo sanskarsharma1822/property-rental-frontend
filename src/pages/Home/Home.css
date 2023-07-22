@@ -1,0 +1,123 @@
+/* Home.css */
+
+#signUpLoadingContainer {
+  width: 200px;
+  height: 200px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes animation {
+  0% {
+    stroke-dasharray: 1 98;
+    stroke-dashoffset: -105;
+  }
+  50% {
+    stroke-dasharray: 80 10;
+    stroke-dashoffset: -160;
+  }
+  100% {
+    stroke-dasharray: 1 98;
+    stroke-dashoffset: -300;
+  }
+}
+
+#spinner {
+  transform-origin: center;
+  animation-name: animation;
+  animation-duration: 1.2s;
+  animation-timing-function: cubic-bezier;
+  animation-iteration-count: infinite;
+}
+
+.homeNavbar {
+  background-color: #80b0b0;
+}
+
+.signUpHeading {
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 4em;
+  animation: riseAnimation 1s ease-in-out;
+  letter-spacing: 0.025em;
+  color: white;
+}
+
+.signUpBullets {
+  font-family: "Public Sans", sans-serif;
+  font-size: 2em;
+  animation: riseAnimation 1s ease-in-out;
+  letter-spacing: 0.025em;
+  color: white;
+}
+
+@media (min-width: 992px) {
+  .signUpImage {
+    position: absolute;
+    top: 22.5vh;
+    right: 8vw;
+  }
+
+  .signUpText {
+    position: absolute;
+    top: 17vh;
+    left: 15vw;
+  }
+}
+
+.signUpImage {
+  animation: flyInAnimation 1s ease-in-out;
+  height: 438.4px;
+  width: 498.5px;
+}
+
+.signUpButtonDiv {
+  margin-top: 1em;
+  margin-left: 2em;
+}
+
+.signUpButton {
+  width: 20%;
+  margin: 0 0.5em 0 0.5em;
+}
+
+@media (max-width: 991px) {
+  .signUpImage {
+    position: static;
+    top: auto;
+    right: auto;
+    margin-top: 20px;
+  }
+  .signUpText {
+    position: static;
+    top: auto;
+    left: auto;
+  }
+}
+
+@keyframes riseAnimation {
+  0% {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes flyInAnimation {
+  0% {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+body {
+  background-color: #80b0b0;
+}

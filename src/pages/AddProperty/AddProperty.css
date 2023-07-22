@@ -1,4 +1,4 @@
-.fullbox {
+/* .fullbox {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,7 +29,7 @@ nav a {
   margin-top: 50px;
 }
 
-.home {
+/* .home {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -38,9 +38,9 @@ nav a {
   background-color: #ffffff;
   width: 400px;
   border-radius: 10px;
-}
+} */
 
-input[type="number"],
+/* input[type="number"],
 input[type="text"],
 input[type="file"] {
   margin: 10px 0;
@@ -69,4 +69,4 @@ button:hover {
   background-color: #45a049;
 }
 
-/* Add additional styles as needed */
+Add additional styles as needed */

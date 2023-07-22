@@ -7,12 +7,21 @@ import ConnectWallet from "../ConnectWallet/ConnectWallet";
 import { useNotification } from "web3uikit";
 import MainPage from "../MainPage/MainPage";
 
+import Container from "react-bootstrap/Container";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import Row from "react-bootstrap/Row";
+
+import signupPage from "../../images/signupPage.jpg";
+import tick from "../../images/tick.png";
+
 //----------------------------Contract Imports---------------------------------------//
 
 import {
   adminABI,
   adminContractAddress,
 } from "../../constants/Admin/adminConstants";
+import { Button, Col } from "react-bootstrap";
 
 //----------------------------------------------------------------------------------//
 
@@ -136,51 +145,114 @@ function Home() {
   };
 
   //**************************************************************************//
-  // if entryToken = -1 : wait , else if entryToken = 0 : no account else mainPage
-  console.log(chainId);
-  console.log(isWeb3Enabled);
   return (
-    <div className="fullbox">
-      {
-        // adminAddress == null ? (
-        //   <h1>Not available on this chain</h1>
-        // ) :
-        entryTokenId !== "0" && entryTokenId !== "-1" ? (
-          <MainPage userTokenId={entryTokenId} />
-        ) : (
-          <div>
-            <nav>
-              <ConnectWallet />
-            </nav>
-            <div className="homeContainer">
-              <section
-                className="home"
-                style={{
-                  backgroundColor: "rgb(0,0,0,0.75)",
-                  borderRadius: "2%",
-                }}
+    <div>
+      {entryTokenId !== "0" && entryTokenId !== "-1" ? (
+        <MainPage userTokenId={entryTokenId} />
+      ) : (
+        <div>
+          <Navbar expand="lg" className="homeNavbar">
+            <Container fluid>
+              <Navbar.Toggle aria-controls="navbarScroll" />
+              <Navbar.Collapse
+                id="navbarScroll"
+                className="d-flex flex-row-reverse"
               >
-                {entryTokenId === "-1" ? (
-                  <h1>You don't have an account</h1>
-                ) : (
-                  <div>
-                    <h1>Wait</h1>
-                    <button
-                      disabled={disableSignup === true}
-                      onClick={async () => {
-                        setDisableSignup(true);
-                        handleEntryTokenMint();
-                      }}
-                    >
-                      Mint
-                    </button>
-                  </div>
-                )}
-              </section>
+                <Nav>
+                  <ConnectWallet />
+                </Nav>
+              </Navbar.Collapse>
+            </Container>
+          </Navbar>
+          {entryTokenId === "-1" ? (
+            <div id="signUpLoadingContainer">
+              <svg viewBox="0 0 100 100">
+                <defs>
+                  <filter id="shadow">
+                    <feDropShadow
+                      dx="0"
+                      dy="0"
+                      stdDeviation="1.5"
+                      flood-color="white"
+                    />
+                  </filter>
+                </defs>
+                <circle
+                  id="spinner"
+                  style={{
+                    fill: "transparent",
+                    stroke: "white",
+                    strokeWidth: "7px",
+                    strokeLinecap: "round",
+                    filter: "url(#shadow)",
+                  }}
+                  cx="50"
+                  cy="50"
+                  r="45"
+                />
+              </svg>
             </div>
-          </div>
-        )
-      }
+          ) : (
+            <Container fluid>
+              <Row>
+                <Col xs={12} md={8} className="signUpText">
+                  <h1 className="signUpHeading">
+                    Renting Made <br></br>More Secure
+                  </h1>
+                  <div className="signUpBullets">
+                    <div style={{ marginTop: "1em" }}>
+                      <div style={{ margin: "0.5em 0" }}>
+                        <img src={tick} style={{ marginRight: "0.5em" }} />{" "}
+                        Reliable Reviews
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ margin: "0.5em 0" }}>
+                        <img src={tick} style={{ marginRight: "0.5em" }} />{" "}
+                        Secure Community
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ margin: "0.5em 0" }}>
+                        <img src={tick} style={{ marginRight: "0.5em" }} /> Easy
+                        Renting
+                      </div>
+                    </div>
+                    <div className="signUpButtonDiv">
+                      <Button
+                        variant="light"
+                        size="lg"
+                        className="signUpButton"
+                        disabled={disableSignup === true}
+                        onClick={async () => {
+                          setDisableSignup(true);
+                          handleEntryTokenMint();
+                        }}
+                      >
+                        Mint
+                      </Button>
+                      <Button
+                        variant="outline-light"
+                        size="lg"
+                        className="signUpButton"
+                      >
+                        Know More
+                      </Button>
+                    </div>
+                  </div>
+                </Col>
+                <Col xs={12} md={4}>
+                  <img
+                    src={signupPage}
+                    alt="Sign Up Image"
+                    className="signUpImage"
+                  />
+                </Col>
+              </Row>
+            </Container>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 //react
-import logo from "./logo.svg";
 import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
@@ -13,6 +13,7 @@ import Profile from "./pages/Profile/Profile";
 import AddProperty from "./pages/AddProperty/AddProperty";
 import PropertyDetail from "./pages/PropertyDetail/PropertyDetail";
 import Tenant from "./pages/Tenant/Tenant";
+import NavbarApp from "./pages/NavbarApp/NavbarApp";
 
 //web3
 import { MoralisProvider } from "react-moralis";
@@ -28,24 +29,17 @@ function App() {
   return (
     <MoralisProvider initializeOnMount={false}>
       <NotificationProvider>
-        <div className="App">
-          <Router>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/addProperty" element={<AddProperty />} />
-              <Route path="/propertyDetail" element={<PropertyDetail />} />
-              <Route path="/tenant" element={<Tenant />} />
-              <Route path="/ownerManagement" element={<OwnerManagement />} />
-              <Route path="/dealTokenData" element={<DealTokenData />} />
-              {/* <Route path="/mainpage" element={<MainPage />} />
-              <Route path="/brand" element={<Brand />} />
-              <Route path="/brand/warehouse" element={<Warehouse />} />
-              <Route path="/customer" element={<Customer />} />
-              <Route path="*" element={<Error />} /> */}
-            </Routes>
-          </Router>
-        </div>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/addProperty" element={<AddProperty />} />
+            <Route path="/propertyDetail" element={<PropertyDetail />} />
+            <Route path="/tenant" element={<Tenant />} />
+            <Route path="/ownerManagement" element={<OwnerManagement />} />
+            <Route path="/dealTokenData" element={<DealTokenData />} />
+          </Routes>
+        </Router>
       </NotificationProvider>
     </MoralisProvider>
   );
