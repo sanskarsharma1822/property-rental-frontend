@@ -1,50 +1,15 @@
-/* MainPage.css */
-
-.fullbox {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
+.mainPageFullBox {
+  height: 100%;
+  margin: 0;
+  background-color: #f5f5f5;
 }
 
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  background-color: #f1f1f1;
+.mainPageHeadingDiv {
+  padding: 2.5em 2.5em 0;
 }
 
-nav a {
-  margin-left: 10px;
-  text-decoration: none;
-  color: #333;
-}
-
-.mainContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
-}
-
-.mainSection {
-  text-align: center;
-}
-
-.mainSection h1 {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-.listedProperties {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.listedProperties > * {
-  margin: 10px;
+.mainPageHeading {
+  color: #1e3131;
+  font-size: 2em;
+  font-family: "Poppins", sans-serif;
 }

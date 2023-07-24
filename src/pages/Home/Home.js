@@ -150,106 +150,126 @@ function Home() {
       {entryTokenId !== "0" && entryTokenId !== "-1" ? (
         <MainPage userTokenId={entryTokenId} />
       ) : (
-        <div>
-          <Navbar expand="lg" className="homeNavbar">
-            <Container fluid>
-              <Navbar.Toggle aria-controls="navbarScroll" />
-              <Navbar.Collapse
-                id="navbarScroll"
-                className="d-flex flex-row-reverse"
-              >
-                <Nav>
-                  <ConnectWallet />
-                </Nav>
-              </Navbar.Collapse>
-            </Container>
-          </Navbar>
+        <div style={{ height: "100%" }}>
           {entryTokenId === "-1" ? (
-            <div id="signUpLoadingContainer">
-              <svg viewBox="0 0 100 100">
-                <defs>
-                  <filter id="shadow">
-                    <feDropShadow
-                      dx="0"
-                      dy="0"
-                      stdDeviation="1.5"
-                      flood-color="white"
-                    />
-                  </filter>
-                </defs>
-                <circle
-                  id="spinner"
-                  style={{
-                    fill: "transparent",
-                    stroke: "white",
-                    strokeWidth: "7px",
-                    strokeLinecap: "round",
-                    filter: "url(#shadow)",
-                  }}
-                  cx="50"
-                  cy="50"
-                  r="45"
-                />
-              </svg>
+            <div className="signUpSpinnerDiv">
+              <Navbar
+                expand="lg"
+                style={{ backgroundColor: "#f5f5f5", paddingTop: "2em" }}
+              >
+                <Container fluid>
+                  <Navbar.Toggle aria-controls="navbarScroll" />
+                  <Navbar.Collapse
+                    id="navbarScroll"
+                    className="d-flex flex-row-reverse"
+                  >
+                    <Nav>
+                      <ConnectWallet />
+                    </Nav>
+                  </Navbar.Collapse>
+                </Container>
+              </Navbar>
+              <div id="signUpLoadingContainer">
+                <svg viewBox="0 0 100 100">
+                  <defs>
+                    <filter id="shadow">
+                      <feDropShadow
+                        dx="0"
+                        dy="0"
+                        stdDeviation="1.5"
+                        flood-color="#80b0b0"
+                      />
+                    </filter>
+                  </defs>
+                  <circle
+                    id="spinner"
+                    style={{
+                      fill: "transparent",
+                      stroke: "#507D7D",
+                      strokeWidth: "7px",
+                      strokeLinecap: "round",
+                      filter: "url(#shadow)",
+                    }}
+                    cx="50"
+                    cy="50"
+                    r="45"
+                  />
+                </svg>
+              </div>
             </div>
           ) : (
-            <Container fluid>
-              <Row>
-                <Col xs={12} md={8} className="signUpText">
-                  <h1 className="signUpHeading">
-                    Renting Made <br></br>More Secure
-                  </h1>
-                  <div className="signUpBullets">
-                    <div style={{ marginTop: "1em" }}>
-                      <div style={{ margin: "0.5em 0" }}>
-                        <img src={tick} style={{ marginRight: "0.5em" }} />{" "}
-                        Reliable Reviews
+            <div className="signUpMainDiv">
+              <Container fluid>
+                <Navbar expand="lg" className="homeNavbar">
+                  <Container fluid>
+                    <Navbar.Toggle aria-controls="navbarScroll" />
+                    <Navbar.Collapse
+                      id="navbarScroll"
+                      className="d-flex flex-row-reverse"
+                    >
+                      <Nav>
+                        <ConnectWallet />
+                      </Nav>
+                    </Navbar.Collapse>
+                  </Container>
+                </Navbar>
+                <Row>
+                  <Col xs={12} md={8} className="signUpText">
+                    <h1 className="signUpHeading">
+                      Renting Made <br></br>More Secure
+                    </h1>
+                    <div className="signUpBullets">
+                      <div style={{ marginTop: "1em" }}>
+                        <div style={{ margin: "0.5em 0" }}>
+                          <img src={tick} style={{ marginRight: "0.5em" }} />{" "}
+                          Reliable Reviews
+                        </div>
+                      </div>
+                      <div>
+                        <div style={{ margin: "0.5em 0" }}>
+                          <img src={tick} style={{ marginRight: "0.5em" }} />{" "}
+                          Secure Community
+                        </div>
+                      </div>
+                      <div>
+                        <div style={{ margin: "0.5em 0" }}>
+                          <img src={tick} style={{ marginRight: "0.5em" }} />{" "}
+                          Easy Renting
+                        </div>
+                      </div>
+                      <div className="signUpButtonDiv">
+                        <Button
+                          variant="light"
+                          size="lg"
+                          className="signUpButton"
+                          disabled={disableSignup === true}
+                          onClick={async () => {
+                            setDisableSignup(true);
+                            handleEntryTokenMint();
+                          }}
+                        >
+                          Mint
+                        </Button>
+                        <Button
+                          variant="outline-light"
+                          size="lg"
+                          className="signUpButton"
+                        >
+                          Know More
+                        </Button>
                       </div>
                     </div>
-                    <div>
-                      <div style={{ margin: "0.5em 0" }}>
-                        <img src={tick} style={{ marginRight: "0.5em" }} />{" "}
-                        Secure Community
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{ margin: "0.5em 0" }}>
-                        <img src={tick} style={{ marginRight: "0.5em" }} /> Easy
-                        Renting
-                      </div>
-                    </div>
-                    <div className="signUpButtonDiv">
-                      <Button
-                        variant="light"
-                        size="lg"
-                        className="signUpButton"
-                        disabled={disableSignup === true}
-                        onClick={async () => {
-                          setDisableSignup(true);
-                          handleEntryTokenMint();
-                        }}
-                      >
-                        Mint
-                      </Button>
-                      <Button
-                        variant="outline-light"
-                        size="lg"
-                        className="signUpButton"
-                      >
-                        Know More
-                      </Button>
-                    </div>
-                  </div>
-                </Col>
-                <Col xs={12} md={4}>
-                  <img
-                    src={signupPage}
-                    alt="Sign Up Image"
-                    className="signUpImage"
-                  />
-                </Col>
-              </Row>
-            </Container>
+                  </Col>
+                  <Col xs={12} md={4}>
+                    <img
+                      src={signupPage}
+                      alt="Sign Up Image"
+                      className="signUpImage"
+                    />
+                  </Col>
+                </Row>
+              </Container>
+            </div>
           )}
         </div>
       )}
